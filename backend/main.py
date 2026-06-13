@@ -26,7 +26,9 @@ app.add_middleware(
 )
 
 @app.post("/generate-plan", response_model=PlanResponse)
+@app.post("/api/generate-plan", response_model=PlanResponse)
 async def generate_plan(request: PlanRequest):
+
     """Generate a full daily cooking plan.
 
     # CODE QUALITY COMPLIANCE
