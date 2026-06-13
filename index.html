@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Content Security Policy to mitigate XSS -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' http://127.0.0.1:8000 http://localhost:8000;" />
+  <title>DailyCook AI – Personal Cooking To‑Do List</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- Header Section with Dark Mode Toggle -->
+  <header class="header">
+    <div class="logo-area">
+      <span class="logo-icon">🍳</span>
+      <h1>DailyCook <span class="accent-text">AI</span></h1>
+    </div>
+    <div class="header-controls">
+      <button id="themeToggle" class="theme-toggle-btn" aria-label="Toggle dark mode">
+        <span class="theme-icon">🌙</span>
+        <span class="theme-text">Dark Mode</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="container">
+    <!-- Input Dashboard Form -->
+    <section class="card input-card" aria-labelledby="formHeading">
+      <h2 id="formHeading">Customize Your Cooking Plan</h2>
+      <form id="planForm" class="grid-form">
+        <!-- Day Selection -->
+        <div class="form-group">
+          <label for="daySelect">Day of the Week</label>
+          <select id="daySelect" required>
+            <option value="monday">Monday</option>
+            <option value="tuesday">Tuesday</option>
+            <option value="wednesday">Wednesday</option>
+            <option value="thursday">Thursday</option>
+            <option value="friday">Friday</option>
+            <option value="saturday">Saturday</option>
+            <option value="sunday">Sunday</option>
+          </select>
+        </div>
+
+        <!-- Diet Selection -->
+        <div class="form-group">
+          <label for="dietSelect">Dietary Preference</label>
+          <select id="dietSelect" required>
+            <option value="veg">Vegetarian</option>
+            <option value="non-veg">Non-Vegetarian</option>
+            <option value="vegan">Vegan</option>
+          </select>
+        </div>
+
+        <!-- Cuisine Selection -->
+        <div class="form-group">
+          <label for="cuisineSelect">Cuisine</label>
+          <select id="cuisineSelect" required>
+            <option value="indian">Indian</option>
+            <option value="italian">Italian</option>
+            <option value="mexican">Mexican</option>
+          </select>
+        </div>
+
+        <!-- Time Limit -->
+        <div class="form-group">
+          <label for="timeRange">Max Cooking Time: <span id="timeValue">30 min</span></label>
+          <input type="range" id="timeRange" min="10" max="120" step="5" value="30" aria-valuemin="10" aria-valuemax="120" aria-valuenow="30" />
+        </div>
+
+        <!-- Budget Selection -->
+        <div class="form-group full-width">
+          <label for="budgetRange">Daily Budget (INR): <span id="budgetValue">₹150</span></label>
+          <input type="range" id="budgetRange" min="20" max="500" step="10" value="150" aria-valuemin="20" aria-valuemax="500" aria-valuenow="150" />
+        </div>
+
+        <!-- Pantry Availability -->
+        <div class="form-group full-width">
+          <label for="pantryInput">Pantry Availability (Available ingredients, comma-separated)</label>
+          <input type="text" id="pantryInput" placeholder="e.g. Onion, Tomato, Oil, Salt" value="Onion, Tomato, Oil" />
+        </div>
+
+        <!-- Action Button -->
+        <div class="form-group full-width btn-group">
+          <button type="submit" id="submitBtn" class="primary-btn">
+            <span class="btn-spinner" hidden></span>
+            <span class="btn-text">Generate AI Plan 🍳</span>
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <!-- Loading State -->
+    <div id="loadingState" class="loading-container" hidden>
+      <div class="spinner"></div>
+      <p>Consulting chef AI, checking recipe index & budget...</p>
+    </div>
+
+    <!-- Error State -->
+    <div id="errorState" class="error-container" hidden>
+      <p id="errorMessage"></p>
+    </div>
+
+    <!-- Results Section -->
+    <div id="results" class="results-layout" hidden>
+      <!-- Left Column: Meal Cards + To-Do List -->
+      <div class="results-left">
+        <!-- Meal Cards -->
+        <section class="card results-card" aria-labelledby="mealsHeading">
+          <h2 id="mealsHeading">Selected Meal Plan</h2>
+          <div class="meal-grid">
+            <div class="meal-card breakfast">
+              <div class="meal-badge">Breakfast</div>
+              <h3 id="breakfastName">-</h3>
+            </div>
+            <div class="meal-card lunch">
+              <div class="meal-badge">Lunch</div>
+              <h3 id="lunchName">-</h3>
+            </div>
+            <div class="meal-card dinner">
+              <div class="meal-badge">Dinner</div>
+              <h3 id="dinnerName">-</h3>
+            </div>
+          </div>
+        </section>
+
+        <!-- To-Do Checklist -->
+        <section class="card results-card" aria-labelledby="todoHeading">
+          <h2 id="todoHeading">Actionable Cooking To-Do List</h2>
+          <p class="section-desc">Check off steps as you complete them during meal prep.</p>
+          <ul id="todoList" class="checklist"></ul>
+        </section>
+      </div>
+
+      <!-- Right Column: Grocery List + Budget & Subs -->
+      <div class="results-right">
+        <!-- Budget Widget -->
+        <section class="card results-card budget-card" aria-labelledby="budgetSummaryHeading">
+          <h2 id="budgetSummaryHeading">Budget Feasibility</h2>
+          <div class="budget-stat-group">
+            <div class="budget-stat">
+              <span class="stat-label">Estimated Cost:</span>
+              <span id="estimatedCost" class="stat-val">-</span>
+            </div>
+            <div class="budget-stat">
+              <span class="stat-label">Set Budget:</span>
+              <span id="targetBudget" class="stat-val">-</span>
+            </div>
+          </div>
+          <!-- Progress Bar -->
+          <div class="progress-bar-container">
+            <div id="budgetProgress" class="progress-bar"></div>
+          </div>
+          <p id="budgetStatusText" class="budget-status-message"></p>
+        </section>
+
+        <!-- Substitutions Panel -->
+        <section id="subsPanel" class="card results-card subs-card" aria-labelledby="subsHeading" hidden>
+          <h2 id="subsHeading">Ingredient Substitutions</h2>
+          <p class="section-desc">Substitutions made based on your available pantry ingredients:</p>
+          <ul id="subsList" class="subs-list"></ul>
+        </section>
+
+        <!-- Grocery Checklist -->
+        <section class="card results-card" aria-labelledby="groceryHeading">
+          <h2 id="groceryHeading">Smart Grocery List</h2>
+          <p class="section-desc">Grouped by supermarket sections for easy shopping.</p>
+          <div id="groceryList" class="grocery-grid"></div>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer Section -->
+  <footer class="footer">
+    <p>© 2026 DailyCook AI. Engineered with High Code Quality, Accessibility, and Security.</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

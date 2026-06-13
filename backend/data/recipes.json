@@ -1,0 +1,46 @@
+{
+  "recipes": [
+    {
+      "name": "Poha",
+      "ingredients": [
+        {"name": "Flattened rice", "qty": "1 cup", "section": "Pantry"},
+        {"name": "Onion", "qty": "1", "section": "Produce"},
+        {"name": "Peas", "qty": "1/2 cup", "section": "Produce"},
+        {"name": "Turmeric", "qty": "1 tsp", "section": "Spices"},
+        {"name": "Oil", "qty": "2 tbsp", "section": "Pantry"}
+      ],
+      "steps": ["Rinse poha", "Heat oil", "Sauté onions", "Add peas and turmeric", "Add poha and cook"],
+      "time": 15,
+      "diet": "veg",
+      "cuisine": "indian"
+    },
+    {
+      "name": "Dal",
+      "ingredients": [
+        {"name": "Toor dal", "qty": "1 cup", "section": "Pantry"},
+        {"name": "Onion", "qty": "1", "section": "Produce"},
+        {"name": "Tomato", "qty": "1", "section": "Produce"},
+        {"name": "Spices", "qty": "2 tsp", "section": "Spices"},
+        {"name": "Oil", "qty": "1 tbsp", "section": "Pantry"}
+      ],
+      "steps": ["Rinse dal", "Boil dal", "Prepare tadka", "Combine and simmer"],
+      "time": 30,
+      "diet": "veg",
+      "cuisine": "indian"
+    },
+    {
+      "name": "Paneer Bhurji",
+      "ingredients": [
+        {"name": "Paneer", "qty": "200g", "section": "Dairy"},
+        {"name": "Onion", "qty": "1", "section": "Produce"},
+        {"name": "Tomato", "qty": "1", "section": "Produce"},
+        {"name": "Spices", "qty": "1 tsp", "section": "Spices"},
+        {"name": "Oil", "qty": "1 tbsp", "section": "Pantry"}
+      ],
+      "steps": ["Crumble paneer", "Sauté onions", "Add tomatoes and spices", "Add paneer and mix"],
+      "time": 20,
+      "diet": "veg",
+      "cuisine": "indian"
+    }
+  ]
+}
